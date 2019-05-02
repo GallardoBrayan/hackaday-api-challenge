@@ -48,6 +48,35 @@ var createTokenUrl = function(code) {
         }
         console.log(recommendedData);
         */
+
+router.get("/", function(req, res, next) {
+  var url = apiUrl + "/projects" + apiKey;
+  request.get(url, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var json = JSON.parse(body);
+      res.render("index", { data: json });
+    } else {
+      console.log("\nError: ", error, "\nResponse body: ", body);
+      res.render(error);
+    }
+  });
+});
+
+//  createPagination(data.page, last_page )
+
+router.get("/:page", function(req, res, next) {
+  var url = apiUrl + "/projects" + apiKey + "&page=" + req.params.page;
+  request.get(url, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var json = JSON.parse(body);
+      res.render("index", { data: json });
+    } else {
+      console.log("\nError: ", error, "\nResponse body: ", body);
+      res.render(error);
+    }
+  });
+});
+
 router.get("/projects", function(req, res, next) {
   var url = apiUrl + "/projects" + apiKey + "&page=" + req.query.page;
   request.get({ url: url, json: true }, function(error, response, body) {
