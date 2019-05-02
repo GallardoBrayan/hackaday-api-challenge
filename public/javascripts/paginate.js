@@ -2,8 +2,22 @@ var list = new Array();
 var pageList = new Array();
 var currentPage = 1;
 var numberPerPage = 50;
+var totalPages;
+
+function setVariables(x, y) {
+  currentPage = x;
+  totalPages = y;
+}
 
 function nextPage() {
+  currentPage += 1;
+  createPaginationButtons(currentPage, totalPages);
+  loadList();
+}
+
+function nextPageSSR(c, t) {
+  currentPage = c;
+  totalPages = t;
   currentPage += 1;
   createPaginationButtons(currentPage, totalPages);
   loadList();
@@ -12,6 +26,14 @@ function nextPage() {
 function previousPage() {
   currentPage -= 1;
   createPaginationButtons(currentPage, totalPages);
+  loadList();
+}
+
+function previousPageSSR(current, total) {
+  currentPage = current;
+  currentPage -= 1;
+  totalPages = total;
+  createPaginationButtons(currentPage, total);
   loadList();
 }
 
@@ -47,7 +69,16 @@ function buttonClick(id) {
   loadList();
 }
 
+function buttonClickSSR(id, total) {
+  currentPage = id;
+  totalPages = total;
+  createPaginationButtons(currentPage, total);
+  loadList();
+}
+
 createPaginationButtons = function(c, m) {
+  currentPage = c;
+  totalPages = m;
   range = paginationCalculation(c, m);
   html = "";
   html += '<nav aria-label="Page navigation example">';
@@ -91,45 +122,6 @@ createPaginationButtons = function(c, m) {
     .append(html);
 };
 
-/*
-function createPaginationButtons(c, m) {
-  html = "";
-  range = paginationCalculation(c, m);
-  html +=
-    "<input class='btn btn-light' type='button' id='previous' onclick='previousPage()' value='previous'/>";
-  for (var i = 0; i < range.length; i++) {
-    if (range[i] != "...") {
-      html += "<input class='";
-      if (currentPage == range[i]) {
-        html += "btn btn-primary";
-      } else {
-        html += "btn btn-light";
-      }
-      html +=
-        "' type='button' id='" +
-        range[i] +
-        "' onclick='buttonClick(" +
-        range[i] +
-        ")' value='" +
-        range[i] +
-        "' />";
-    } else {
-      html +=
-        "<input class='btn btn-light' type='button' id='" +
-        range[i] +
-        "' value='" +
-        range[i] +
-        "' disabled/>";
-    }
-  }
-  html +=
-    "<input class='btn btn-light' type='button' id='next' onclick='nextPage()' value='next' />";
-  $("#pagination")
-    .empty()
-    .append(html);
-}
-*/
-
 function paginationCalculation(c, m) {
   var current = c,
     last = m,
@@ -157,8 +149,15 @@ function paginationCalculation(c, m) {
     rangeWithDots.push(i);
     l = i;
   }
-
+  console.log(rangeWithDots);
   return rangeWithDots;
 }
 
-module.exports = { paginationCalculation };
+module.exports = {
+  paginationCalculation,
+  previousPage,
+  previousPageSSR,
+  currentPage,
+  totalPages,
+  setVariables
+};

@@ -64,12 +64,13 @@ router.get("/", function(req, res, next) {
 
 //  createPagination(data.page, last_page )
 
-router.get("/:page", function(req, res, next) {
-  var url = apiUrl + "/projects" + apiKey + "&page=" + req.params.page;
-  request.get(url, function(error, response, body) {
+router.get("/projects", function(req, res, next) {
+  var url = apiUrl + "/projects" + apiKey + "&page=" + req.query.page;
+  console.log("asdilnfsk");
+  request.get({ url: url, json: true }, function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      var json = JSON.parse(body);
-      res.render("index", { data: json });
+      console.log(body);
+      res.json(body);
     } else {
       console.log("\nError: ", error, "\nResponse body: ", body);
       res.render(error);
@@ -77,11 +78,12 @@ router.get("/:page", function(req, res, next) {
   });
 });
 
-router.get("/projects", function(req, res, next) {
-  var url = apiUrl + "/projects" + apiKey + "&page=" + req.query.page;
-  request.get({ url: url, json: true }, function(error, response, body) {
+router.get("/:page", function(req, res, next) {
+  var url = apiUrl + "/projects" + apiKey + "&page=" + req.params.page;
+  request.get(url, function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      res.json(body);
+      var json = JSON.parse(body);
+      res.render("index", { data: json });
     } else {
       console.log("\nError: ", error, "\nResponse body: ", body);
       res.render(error);
