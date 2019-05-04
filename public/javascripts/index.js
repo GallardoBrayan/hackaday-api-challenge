@@ -49,7 +49,7 @@ function createTable(data) {
       data.projects[row].name +
       "</td><td><span class='tool-tip'>" +
       data.projects[row].owner_id +
-      "</span><div id='" +
+      "</span><div style='z-index: 1000 !important' id='" +
       data.projects[row].owner_id +
       "'" +
       "class='tool-tip-details'></div></td><td>" +
@@ -75,51 +75,9 @@ function createTable(data) {
   $(".table_body")
     .empty()
     .append(html);
-
-  // H.A.D api call when tooltip hover
-  $(".tool-tip").mouseenter(function() {
-    var owner_id = $(this).html();
-    $("#" + owner_id).css({
-      display: "inline",
-      position: "absolute",
-      color: "#111",
-      border: "1px solid #dca",
-      background: "#fffaf0"
-    });
-
-    var owner_url = "http://api.hackaday.io/v1/users/" + owner_id + apiKey;
-    if (!(owner_id in tooltipData)) {
-      $.ajax({
-        url: owner_url,
-        type: "GET",
-
-        success: function(data) {
-          tooltipData[owner_id] = {
-            username: data.username,
-            screen_name: data.screen_name,
-            about_me: data.about_me,
-            location: data.location,
-            projects: data.projects,
-            skulls: data.skulls,
-            followers: data.followers
-          };
-          appendHTML(owner_id);
-        }
-      });
-    } else {
-      appendHTML(owner_id);
-    }
-  });
-
-  $(".tool-tip").mouseleave(function() {
-    var owner_id = $(this).html();
-    $("#" + owner_id).html("");
-    $("#" + owner_id).css({
-      display: "none"
-    });
-  });
 }
 
+// H.A.D api call when tooltip hover
 $(".tool-tip").mouseenter(function() {
   var owner_id = $(this).html();
   $("#" + owner_id).css({
@@ -127,7 +85,8 @@ $(".tool-tip").mouseenter(function() {
     position: "absolute",
     color: "#111",
     border: "1px solid #dca",
-    background: "#fffaf0"
+    background: "#fffaf0",
+    "z-index": "1000 !important"
   });
 
   var owner_url = "http://api.hackaday.io/v1/users/" + owner_id + apiKey;

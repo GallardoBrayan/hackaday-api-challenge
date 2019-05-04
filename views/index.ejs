@@ -14,7 +14,6 @@
     <h2 style="text-align:center;">Supplyframe Hackaday Challenge</h2>
     <div id="wrapper">
       <table
-        id="dtBasicExample"
         class="table table-striped table-bordered table-sm"
         cellspacing="0"
         width="100%"
@@ -26,6 +25,8 @@
             <th style="width:72%">Summary</th>
           </tr>
         </thead>
+
+        <%# builds table about projects %>
         <tbody class="table_body">
           <% for (var i=0; i < data.projects.length; i++) { %>
           <tr>
@@ -33,6 +34,7 @@
             <td>
               <span class="tool-tip"><%= data.projects[i].owner_id %></span>
               <div
+                style="z-index: 1000 !important"
                 id="<%= data.projects[i].owner_id %>"
                 class="tool-tip-details"
               ></div>
@@ -42,9 +44,11 @@
           <% } %>
         </tbody>
       </table>
-      <div id="pagination">
+
+      <%# pagination navigation bar %>
+      <div id="pagination" style="z-index: 1 !important">
         <nav>
-          <ul class="pagination">
+          <ul class="pagination justify-content-center">
             <% if (data.page == 1) { %>
             <li class="page-item disabled ">
               <a

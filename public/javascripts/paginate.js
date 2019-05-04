@@ -28,6 +28,8 @@ function nextPage() {
   createPaginationButtons(currentPage, totalPages);
   loadList();
   loader();
+  var newURL = "/" + currentPage;
+  window.history.pushState("", "", newURL);
 }
 
 // next page pagination for initial server side loading of web app
@@ -38,6 +40,8 @@ function nextPageSSR(c, t) {
   createPaginationButtons(currentPage, totalPages);
   loadList();
   loader();
+  var newURL = "/" + currentPage;
+  window.history.pushState("", "", newURL);
 }
 
 // non server side rendering
@@ -47,6 +51,8 @@ function previousPage() {
   loadList();
   $(window).scrollTop(0);
   loader();
+  var newURL = "/" + currentPage;
+  window.history.pushState("", "", newURL);
 }
 
 // previous page pagination for initial server side loading
@@ -59,6 +65,8 @@ function previousPageSSR(current, total) {
   loadList();
   $(window).scrollTop(0);
   loader();
+  var newURL = "/" + currentPage;
+  window.history.pushState("", "", newURL);
 }
 
 function loadList() {
@@ -92,6 +100,8 @@ function buttonClick(id) {
   loadList();
   $(window).scrollTop(0);
   loader();
+  var newURL = "/" + id;
+  window.history.pushState("", "", newURL);
 }
 
 function buttonClickSSR(id, total) {
@@ -101,6 +111,8 @@ function buttonClickSSR(id, total) {
   loadList();
   $(window).scrollTop(0);
   loader();
+  var newURL = "/" + id;
+  window.history.pushState("", "", newURL);
 }
 
 // Create the pagination buttons depending on the range of pages
@@ -109,8 +121,8 @@ createPaginationButtons = function(c, m) {
   totalPages = m;
   range = paginationCalculation(c, m);
   html = "";
-  html += '<nav aria-label="Page navigation example">';
-  html += '<ul class="pagination">';
+  html += "<nav>";
+  html += '<ul class="pagination justify-content-center">';
   html += '<li class="';
   if (currentPage == 1) {
     html += "page-item disabled";
