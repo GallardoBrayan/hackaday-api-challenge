@@ -1,17 +1,3 @@
-/*
-$(document).ready(function() {
-  $.ajax({
-    url: "/projects?page=1",
-    type: "GET",
-    success: function(data) {
-      totalPages = data.last_page;
-      createTable(data);
-      createPaginationButtons(1, totalPages);
-    }
-  });
-});
-*/
-
 var totalPages;
 
 function appendHTML(owner_id) {
@@ -43,6 +29,8 @@ function appendHTML(owner_id) {
     .append(html_append);
 }
 
+// keep track of tooltip data from previous tooltip uses
+// to prevent additional calls for the same owner
 var tooltipData = {};
 
 var clientId = "moG119pnGbK2BxCzliJ4EzFezKm41Ev6OMvebyUerHnm7nrP";
@@ -50,6 +38,8 @@ var clientSecret = "Xu6XNriu77w4FofDcLNZlTAY2m3u37M8FgYitvZoEQXQElOF";
 var userKey = "557T5zaOC4yzJDfs";
 var apiKey = "?api_key=" + userKey;
 var apiUrl = "https://api.hackaday.io/v1";
+
+// creation of table upon receiving data from the HAD api
 function createTable(data) {
   var html = "";
 
@@ -67,10 +57,26 @@ function createTable(data) {
       "</td></tr>";
   }
 
+  // loading visual effect
+  $("#paginationLoader").fadeOut(500, function() {
+    $("#paginationLoader").remove();
+    $("table").css({
+      filter: "blur(0px)",
+      "-webkit-filter": "blur(0px)",
+      "-moz-filter": "blur(0px)",
+      "-o-filter": "blur(0px)",
+      "-ms-filter": "blur(0px)"
+    });
+  });
+  $("html, body").css({
+    overflow: "auto",
+    height: "auto"
+  });
   $(".table_body")
     .empty()
     .append(html);
 
+  // H.A.D api call when tooltip hover
   $(".tool-tip").mouseenter(function() {
     var owner_id = $(this).html();
     $("#" + owner_id).css({

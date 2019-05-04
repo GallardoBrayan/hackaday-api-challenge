@@ -4,43 +4,66 @@ var currentPage = 1;
 var numberPerPage = 50;
 var totalPages;
 
-function setVariables(x, y) {
-  currentPage = x;
-  totalPages = y;
+// loading visual effect
+function loader() {
+  $("html, body").css({
+    overflow: "hidden",
+    height: "100%"
+  });
+
+  $("#wrapper").append(
+    '<div id="paginationLoader"><div class="loader">Loading...</div></div>'
+  );
+  $("table").css({
+    filter: "blur(10px)",
+    "-webkit-filter": "blur(10px)",
+    "-moz-filter": "blur(10px)",
+    "-o-filter": "blur(10px)",
+    "-ms-filter": "blur(10px)"
+  });
 }
 
 function nextPage() {
   currentPage += 1;
   createPaginationButtons(currentPage, totalPages);
   loadList();
+  loader();
 }
 
+// next page pagination for initial server side loading of web app
 function nextPageSSR(c, t) {
   currentPage = c;
   totalPages = t;
   currentPage += 1;
   createPaginationButtons(currentPage, totalPages);
   loadList();
+  loader();
 }
 
+// non server side rendering
 function previousPage() {
   currentPage -= 1;
   createPaginationButtons(currentPage, totalPages);
   loadList();
+  $(window).scrollTop(0);
+  loader();
 }
 
+// previous page pagination for initial server side loading
+// when a permanent url is used
 function previousPageSSR(current, total) {
   currentPage = current;
   currentPage -= 1;
   totalPages = total;
   createPaginationButtons(currentPage, total);
   loadList();
+  $(window).scrollTop(0);
+  loader();
 }
 
 function loadList() {
   var begin = (currentPage - 1) * numberPerPage;
   var end = begin + numberPerPage;
-
   pageList = list.slice(begin, end);
   drawList();
   check();
@@ -67,6 +90,8 @@ function buttonClick(id) {
   currentPage = id;
   createPaginationButtons(currentPage, totalPages);
   loadList();
+  $(window).scrollTop(0);
+  loader();
 }
 
 function buttonClickSSR(id, total) {
@@ -74,8 +99,11 @@ function buttonClickSSR(id, total) {
   totalPages = total;
   createPaginationButtons(currentPage, total);
   loadList();
+  $(window).scrollTop(0);
+  loader();
 }
 
+// Create the pagination buttons depending on the range of pages
 createPaginationButtons = function(c, m) {
   currentPage = c;
   totalPages = m;
@@ -122,6 +150,8 @@ createPaginationButtons = function(c, m) {
     .append(html);
 };
 
+// calculate a range of pages
+// this is the logic to get the current page and nearby pages of the current page
 function paginationCalculation(c, m) {
   var current = c,
     last = m,
@@ -149,7 +179,6 @@ function paginationCalculation(c, m) {
     rangeWithDots.push(i);
     l = i;
   }
-  console.log(rangeWithDots);
   return rangeWithDots;
 }
 
@@ -158,6 +187,5 @@ module.exports = {
   previousPage,
   previousPageSSR,
   currentPage,
-  totalPages,
-  setVariables
+  totalPages
 };
