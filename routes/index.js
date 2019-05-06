@@ -24,30 +24,6 @@ var createTokenUrl = function(code) {
     "&grant_type=authorization_code"
   );
 };
-/*
-        for (
-          var project = 0;
-          project < bodyData["projects"].length;
-          project++
-        ) {
-          for (
-            var tag = 0;
-            tag < bodyData["projects"][project]["tags"].length;
-            tag++
-          ) {
-            if (bodyData["projects"][project]["tags"][tag] in recommendedData) {
-              recommendedData[bodyData["projects"][project]["tags"][tag]].push(
-                bodyData["projects"][project].name
-              );
-            } else {
-              recommendedData[bodyData["projects"][project]["tags"][tag]] = [
-                bodyData["projects"][project].name
-              ];
-            }
-          }
-        }
-        console.log(recommendedData);
-        */
 
 router.get("/", function(req, res, next) {
   var url = apiUrl + "/projects" + apiKey;
@@ -62,14 +38,10 @@ router.get("/", function(req, res, next) {
   });
 });
 
-//  createPagination(data.page, last_page )
-
 router.get("/projects", function(req, res, next) {
   var url = apiUrl + "/projects" + apiKey + "&page=" + req.query.page;
-  console.log("asdilnfsk");
   request.get({ url: url, json: true }, function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      console.log(body);
       res.json(body);
     } else {
       console.log("\nError: ", error, "\nResponse body: ", body);
@@ -91,11 +63,79 @@ router.get("/:page", function(req, res, next) {
   });
 });
 
+//6668
+
+var recommendationData = function(jsonData, owner_name, res) {
+  var recommendedData = {};
+  var urls = [];
+  var count = 0;
+  var responses = [];
+  var base_url = "https://api.hackaday.io/v1/projects/search?search_term=";
+  for (var i = 0; i < jsonData.tags.length; i++) {
+    var value = encodeURIComponent(jsonData.tags[i]).replace(/%20/g, "+");
+    urls.push(base_url + value + "&api_key=" + userKey);
+  }
+
+  for (var url = 0; url < urls.length; url++) {
+    request.get(urls[url], function(error, response, body) {
+      if (!error && response.statusCode === 200) {
+        responses.push(body);
+
+        if (urls.length == responses.length) {
+          for (var i = 0; i < jsonData.tags.length; i++) {
+            for (var result = 0; result < responses.length; result++) {
+              parsed = JSON.parse(responses[result]);
+              for (var proj = 0; proj < parsed.projects.length; proj++) {
+                if (parsed.projects[proj].name) {
+                  if (
+                    !(parsed.projects[proj].name in recommendedData) &&
+                    jsonData.name != parsed.projects[proj].name
+                  ) {
+                    recommendedData[parsed.projects[proj].name] =
+                      parsed.projects[proj].id;
+                  }
+                }
+              }
+            }
+          }
+          res.render("projectDetail", {
+            data: jsonData,
+            owner_name: owner_name,
+            recommended: recommendedData
+          });
+        }
+      } else {
+        console.log("\nError: ", error, "\nResponse body: ", body);
+        res.render(error);
+      }
+    });
+  }
+};
+
+// request for owner name
+var owner_info = function(owner_url, jsonData, res) {
+  request.get(owner_url, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      var ownerjson = JSON.parse(body);
+      console.log(ownerjson);
+      recommendationData(jsonData, ownerjson.screen_name, res);
+    } else {
+      console.log("\nError: ", error, "\nResponse body: ", body);
+      res.render(error);
+    }
+  });
+};
+
+// get request for specific project
 router.get("/projects/:id", function(req, res, next) {
   var url = apiUrl + "/projects/" + req.params.id + apiKey;
-  request.get({ url: url, json: true }, function(error, response, body) {
+  request.get(url, function(error, response, body) {
     if (!error && response.statusCode === 200) {
-      res.json(body);
+      var json = JSON.parse(body);
+      var ownerURL =
+        "http://api.hackaday.io/v1/users/" + json.owner_id + apiKey;
+      // request for owner information
+      owner_info(ownerURL, json, res);
     } else {
       console.log("\nError: ", error, "\nResponse body: ", body);
       res.render(error);

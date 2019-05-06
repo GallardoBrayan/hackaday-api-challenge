@@ -30,7 +30,12 @@
         <tbody class="table_body">
           <% for (var i=0; i < data.projects.length; i++) { %>
           <tr>
-            <td><%= data.projects[i].name %></td>
+            <td>
+              <a href="/projects/<%=data.projects[i].id%>"
+                ><%= data.projects[i].name %></a
+              >
+            </td>
+
             <td>
               <span class="tool-tip"><%= data.projects[i].owner_id %></span>
               <div

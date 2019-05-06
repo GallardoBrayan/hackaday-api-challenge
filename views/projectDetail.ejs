@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <script
+      src="https://code.jquery.com/jquery-3.4.0.min.js"
+      integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+      crossorigin="anonymous"
+    ></script>
+    <link
+      href="//netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css"
+      rel="stylesheet"
+      id="bootstrap-css"
+    />
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  </head>
+
+  <body>
+    <link
+      href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <div id="wrapper" class="container" style="margin: 0px auto">
+      <div class="row">
+        <div class="col-md-offset-2 col-md-8 col-lg-offset-3 col-lg-6">
+          <div class="well profile">
+            <div class="col-sm-12">
+              <h3 style="text-align:center;"><%= data.name %></h3>
+
+              <div class="col-xs-12">
+                <p><strong>Owner: </strong><%= owner_name %></p>
+                <p><strong>Skulls: </strong><%= data.skulls %></p>
+                <p><strong>Summary: </strong><%= data.summary %></p>
+                <p><strong>Summary: </strong><%= data.description %></p>
+                <p><strong>Created: </strong><%= formatDate(data.created) %></p>
+                <p>
+                  <strong>Last Updated: </strong><%= formatDate(data.updated) %>
+                </p>
+                <p>
+                  <strong>Tags: </strong>
+                  <% for (var i = 0; i < data.tags.length; i++) { %>
+                  <span class="tags"><%= data.tags[i] %></span>
+                  <% } %>
+                </p>
+
+                <p>
+                  <strong>Recommended Projects: </strong>
+                </p>
+                <ul
+                  id="myList"
+                  class="list-group"
+                  style="list-style: none;margin-bottom: 5px !important"
+                >
+                  <% for (var key in recommended) { %>
+                  <li>
+                    <span class="project-tags"
+                      ><a
+                        style="text-decoration: none;color: #FFFFFF;"
+                        href="/projects/<%= recommended[key] %>"
+                        ><%= key %></a
+                      ></span
+                    >
+                  </li>
+                  <% } %>
+                </ul>
+
+                <div id="loadMore" style="margin-bottom: 5px !important">
+                  <button type="button" class="btn btn-default">
+                    Load More
+                  </button>
+                </div>
+                <div id="showLess">
+                  <button type="button" class="btn btn-default">
+                    Show Less
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div
+              class="col-xs-12 divider text-center"
+              style="margin-top: 10px !important"
+            >
+              <div class="col-xs-12 col-sm-4 emphasis">
+                <h2><strong><%= data.views %></strong></h2>
+                <p><small>Views</small></p>
+              </div>
+              <div class="col-xs-12 col-sm-4 emphasis">
+                <h2><strong><%= data.comments %></strong></h2>
+                <p><small>Comments</small></p>
+              </div>
+              <div class="col-xs-12 col-sm-4 emphasis">
+                <h2><strong><%= data.followers %></strong></h2>
+                <p><small>Followers</small></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(document).ready(function() {
+        $("#myList li")
+          .not(":lt(" + 3 + ")")
+          .hide();
+        $("#showLess").hide();
+        $("html, body").scrollTop(0);
+
+        $(window).on("load", function() {
+          setTimeout(function() {
+            $("html, body").scrollTop(0);
+          }, 0);
+        });
+        $("html, body").css({
+          overflow: "hidden",
+          height: "100%"
+        });
+
+        size_li = $("#myList li").length;
+        x = 3;
+        $("#myList li:lt(" + x + ")").show();
+        $("#loadMore").click(function() {
+          x = x + 5 <= size_li ? x + 5 : size_li;
+          $("#myList li:lt(" + x + ")").show();
+          $("#showLess").show();
+          if (x == size_li) {
+            $("#loadMore").hide();
+          }
+        });
+        $("#showLess").click(function() {
+          x = x - 5 < 0 ? 3 : x - 5;
+          $("#myList li")
+            .not(":lt(" + x + ")")
+            .hide();
+          $("#loadMore").show();
+          $("#showLess").show();
+          if (x == 3) {
+            $("#showLess").hide();
+          }
+        });
+      });
+      $("#wrapper").append(
+        '<div id="loadingDiv"><div class="loader">Loading...</div></div>'
+      );
+      $(window).on("load", function() {
+        setTimeout(removeLoader, 2000); //wait for page load PLUS two seconds.
+      });
+      function removeLoader() {
+        $("#loadingDiv").fadeOut(500, function() {
+          // fadeOut complete. Remove the loading div
+          $("#loadingDiv").remove(); //makes page more lightweight
+          $("html, body").css({
+            overflow: "auto",
+            height: "auto"
+          });
+        });
+      }
+    </script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
