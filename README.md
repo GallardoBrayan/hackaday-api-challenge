@@ -23,3 +23,7 @@ specific page
 example
 
 - http://localhost:3000/projects/5373
+
+## To run tests
+
+- npm tests
