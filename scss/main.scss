@@ -106,7 +106,10 @@ a {
 body {
   font-family: "Lato", "sans-serif";
 }
-
+.profile {
+  min-height: 355px;
+  display: inline-block;
+}
 .divider {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
