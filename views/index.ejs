@@ -31,20 +31,20 @@
           <% for (var i=0; i < data.projects.length; i++) { %>
           <tr>
             <td>
-              <span class="tool-tip" id="<%= data.projects[i].owner_id %>-span">
                 <a href="/projects/<%=data.projects[i].id%>"
                   ><%= data.projects[i].name %></a
-                ></span
-              >
+                >
+            </td>
+
+            <td>
+              <span class="tool-tip" id="<%= data.projects[i].owner_id %>-span">
+                  <%= data.projects[i].owner_id%>
+              
               <div
                 style="z-index: 1000 !important"
                 id="<%= data.projects[i].owner_id %>"
                 class="tool-tip-details"
               ></div>
-            </td>
-
-            <td>
-              <span><%= data.projects[i].owner_id %></span>
             </td>
             <td><%= data.projects[i].summary %></td>
           </tr>
@@ -157,6 +157,10 @@
       crossorigin="anonymous"
     ></script>
     <script src="/javascripts/index.js" type="text/javascript"></script>
-    <script src="/javascripts/paginate.js" type="text/javascript"></script>
+    <script
+      defer
+      src="/javascripts/paginate.js"
+      type="text/javascript"
+    ></script>
   </body>
 </html>
