@@ -9,21 +9,6 @@ var userKey = "557T5zaOC4yzJDfs";
 
 var apiKey = "?api_key=" + userKey;
 var apiUrl = "https://api.hackaday.io/v1";
-var apiAuthUrl = "https://api.hackaday.io/v1/me" + apiKey;
-var oAuthRedirect =
-  "https://hackaday.io/authorize?client_id=" + clientId + "&response_type=code";
-var createTokenUrl = function(code) {
-  return (
-    "https://auth.hackaday.io/access_token?" +
-    "client_id=" +
-    clientId +
-    "&client_secret=" +
-    clientSecret +
-    "&code=" +
-    code +
-    "&grant_type=authorization_code"
-  );
-};
 
 router.get("/", function(req, res, next) {
   var url = apiUrl + "/projects" + apiKey;
@@ -63,8 +48,7 @@ router.get("/:page", function(req, res, next) {
   });
 });
 
-//6668
-
+// gathers recommended projects for current project based on the tags
 var recommendationData = function(jsonData, owner_name, res) {
   var recommendedData = {};
   var urls = [];
@@ -117,7 +101,6 @@ var owner_info = function(owner_url, jsonData, res) {
   request.get(owner_url, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       var ownerjson = JSON.parse(body);
-      console.log(ownerjson);
       recommendationData(jsonData, ownerjson.screen_name, res);
     } else {
       console.log("\nError: ", error, "\nResponse body: ", body);

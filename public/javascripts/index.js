@@ -23,7 +23,6 @@ function appendHTML(owner_id) {
     tooltipData[owner_id].followers +
     "</div>";
   html_append += "</div>";
-
   $("#" + owner_id)
     .empty()
     .append(html_append);
@@ -45,14 +44,18 @@ function createTable(data) {
 
   for (var row = 0; row < data.per_page; row++) {
     html +=
-      "<tr><td>" +
-      data.projects[row].name +
-      "</td><td><span class='tool-tip'>" +
+      "<tr><td><span class='tool-tip' id='" +
       data.projects[row].owner_id +
-      "</span><div style='z-index: 1000 !important' id='" +
+      "-span'><a href='/projects/" +
+      data.projects[row].id +
+      "'>" +
+      data.projects[row].name +
+      "</a></span><div style='z-index: 1000 !important' id='" +
       data.projects[row].owner_id +
       "'" +
-      "class='tool-tip-details'></div></td><td>" +
+      "class='tool-tip-details'></div></td><td><span>" +
+      data.projects[row].owner_id +
+      "</span></td><td>" +
       data.projects[row].summary +
       "</td></tr>";
   }
@@ -78,9 +81,10 @@ function createTable(data) {
 }
 
 // H.A.D api call when tooltip hover
-$(".tool-tip").mouseenter(function() {
-  var owner_id = $(this).html();
-  $("#" + owner_id).css({
+$(".table_body").on("mouseenter", ".tool-tip", function() {
+  var owner_id = $(this).attr("id");
+  owner_id = owner_id.split("-");
+  $("div#" + owner_id[0]).css({
     display: "inline",
     position: "absolute",
     color: "#111",
@@ -89,14 +93,14 @@ $(".tool-tip").mouseenter(function() {
     "z-index": "1000 !important"
   });
 
-  var owner_url = "http://api.hackaday.io/v1/users/" + owner_id + apiKey;
-  if (!(owner_id in tooltipData)) {
+  var owner_url = "http://api.hackaday.io/v1/users/" + owner_id[0] + apiKey;
+  if (!(owner_id[0] in tooltipData)) {
     $.ajax({
       url: owner_url,
       type: "GET",
 
       success: function(data) {
-        tooltipData[owner_id] = {
+        tooltipData[owner_id[0]] = {
           username: data.username,
           screen_name: data.screen_name,
           about_me: data.about_me,
@@ -105,18 +109,19 @@ $(".tool-tip").mouseenter(function() {
           skulls: data.skulls,
           followers: data.followers
         };
-        appendHTML(owner_id);
+        appendHTML(owner_id[0]);
       }
     });
   } else {
-    appendHTML(owner_id);
+    appendHTML(owner_id[0]);
   }
 });
 
-$(".tool-tip").mouseleave(function() {
-  var owner_id = $(this).html();
-  $("#" + owner_id).html("");
-  $("#" + owner_id).css({
+$(".table_body").on("mouseleave", ".tool-tip", function() {
+  var owner_id = $(this).attr("id");
+  owner_id = owner_id.split("-");
+  $("#" + owner_id[0]).html("");
+  $("#" + owner_id[0]).css({
     display: "none"
   });
 });

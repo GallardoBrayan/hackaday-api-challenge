@@ -5,7 +5,7 @@ var numberPerPage = 50;
 var totalPages;
 
 // loading visual effect
-function loader() {
+loader = function() {
   $("html, body").css({
     overflow: "hidden",
     height: "100%"
@@ -21,19 +21,19 @@ function loader() {
     "-o-filter": "blur(10px)",
     "-ms-filter": "blur(10px)"
   });
-}
+};
 
-function nextPage() {
+nextPage = function() {
   currentPage += 1;
   createPaginationButtons(currentPage, totalPages);
   loadList();
   loader();
   var newURL = "/" + currentPage;
   window.history.pushState("", "", newURL);
-}
+};
 
 // next page pagination for initial server side loading of web app
-function nextPageSSR(c, t) {
+nextPageSSR = function(c, t) {
   currentPage = c;
   totalPages = t;
   currentPage += 1;
@@ -42,10 +42,10 @@ function nextPageSSR(c, t) {
   loader();
   var newURL = "/" + currentPage;
   window.history.pushState("", "", newURL);
-}
+};
 
 // non server side rendering
-function previousPage() {
+previousPage = function() {
   currentPage -= 1;
   createPaginationButtons(currentPage, totalPages);
   loadList();
@@ -53,11 +53,11 @@ function previousPage() {
   loader();
   var newURL = "/" + currentPage;
   window.history.pushState("", "", newURL);
-}
+};
 
 // previous page pagination for initial server side loading
 // when a permanent url is used
-function previousPageSSR(current, total) {
+previousPageSSR = function(current, total) {
   currentPage = current;
   currentPage -= 1;
   totalPages = total;
@@ -67,17 +67,17 @@ function previousPageSSR(current, total) {
   loader();
   var newURL = "/" + currentPage;
   window.history.pushState("", "", newURL);
-}
+};
 
-function loadList() {
+loadList = function() {
   var begin = (currentPage - 1) * numberPerPage;
   var end = begin + numberPerPage;
   pageList = list.slice(begin, end);
   drawList();
   check();
-}
+};
 
-function drawList() {
+drawList = function() {
   $.ajax({
     url: "/projects?page=" + currentPage,
     type: "GET",
@@ -85,16 +85,16 @@ function drawList() {
       createTable(data);
     }
   });
-}
+};
 
-function check() {
+check = function() {
   document.getElementById("next").className =
     currentPage == totalPages ? "page-item disabled" : "page-item";
   document.getElementById("previous").className =
     currentPage == 1 ? "page-item disabled" : "page-item";
-}
+};
 
-function buttonClick(id) {
+buttonClick = function(id) {
   currentPage = id;
   createPaginationButtons(currentPage, totalPages);
   loadList();
@@ -102,9 +102,9 @@ function buttonClick(id) {
   loader();
   var newURL = "/" + id;
   window.history.pushState("", "", newURL);
-}
+};
 
-function buttonClickSSR(id, total) {
+buttonClickSSR = function(id, total) {
   currentPage = id;
   totalPages = total;
   createPaginationButtons(currentPage, total);
@@ -113,7 +113,7 @@ function buttonClickSSR(id, total) {
   loader();
   var newURL = "/" + id;
   window.history.pushState("", "", newURL);
-}
+};
 
 // Create the pagination buttons depending on the range of pages
 createPaginationButtons = function(c, m) {
@@ -164,7 +164,7 @@ createPaginationButtons = function(c, m) {
 
 // calculate a range of pages
 // this is the logic to get the current page and nearby pages of the current page
-function paginationCalculation(c, m) {
+paginationCalculation = function(c, m) {
   var current = c,
     last = m,
     delta = 2,
@@ -192,28 +192,7 @@ function paginationCalculation(c, m) {
     l = i;
   }
   return rangeWithDots;
-}
-
-function formatDate(epoch) {
-  var date = new Date(epoch * 1000);
-  var hours = date.getHours();
-  var minutes = date.getMinutes();
-  var ampm = hours >= 12 ? "pm" : "am";
-  hours = hours % 12;
-  hours = hours ? hours : 12;
-  minutes = minutes < 10 ? "0" + minutes : minutes;
-  var strTime = hours + ":" + minutes + " " + ampm;
-
-  var year = date.getFullYear();
-
-  var month = (1 + date.getMonth()).toString();
-  month = month.length > 1 ? month : "0" + month;
-
-  var day = date.getDate().toString();
-  day = day.length > 1 ? day : "0" + day;
-
-  return month + "/" + day + "/" + year + " " + strTime;
-}
+};
 
 module.exports = {
   paginationCalculation,
@@ -221,5 +200,9 @@ module.exports = {
   previousPageSSR,
   currentPage,
   totalPages,
-  formatDate
+  nextPage,
+  nextPageSSR,
+  loader,
+  buttonClick,
+  buttonClickSSR
 };

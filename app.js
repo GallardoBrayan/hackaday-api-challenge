@@ -17,15 +17,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+app.locals = require("./public/javascripts/helper");
+app.locals = require("./public/javascripts/paginate");
 app.use("/", indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
-app.locals = require("./public/javascripts/paginate");
 
 // error handler
 app.use(function(err, req, res, next) {
