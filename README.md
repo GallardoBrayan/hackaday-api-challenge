@@ -1,4 +1,4 @@
-# Supplyframe Hackaday Challenge
+# Hackaday API Integration Challenge
 
 ## Instructions:
 
